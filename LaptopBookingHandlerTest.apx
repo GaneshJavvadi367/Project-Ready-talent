@@ -1,0 +1,45 @@
+// Test Class
+@isTest
+private class LaptopBookingHandlerTest {
+    @isTest
+    static void testSendEmailNotification() {
+        // Setup test data for consumer
+        consumer__c consumer = new consumer__c(
+            Name = 'John Doe',
+            Phone_number__c = '9887346134',
+            Address__c = 'Paris, France',
+            Email__c = 'johndoe@example.com',
+            consumer_Status__c = 'Student'
+        );
+        insert consumer;
+
+        // Setup test data for total laptops
+        Total_Laptops__c totalLaptops = new Total_Laptops__c(
+            Name = '1'
+        );
+        insert totalLaptops;
+
+        // Setup test data for laptop booking
+        Laptop_Bookings__c testBooking = new Laptop_Bookings__c(
+            Name = 'Booking11',
+            name__c = consumer.Id,
+            Email__c = consumer.Email__c,
+            Amount__c = 900,
+            core__c = 'core i3',
+            Laptop_type__c = 'Dell',
+            Total_No_Of_Laptops__c = totalLaptops.Id,
+            How_Many_Months__c = '1'
+        );
+        insert testBooking;
+
+        // Test email notification
+        Test.startTest();
+        // Insert to trigger the notification in the trigger itself
+        insert testBooking;
+        Test.stopTest();
+
+        // Assert email sent count
+        Integer sentEmailCount = Limits.getEmailInvocations();
+        System.assertEquals(1, sentEmailCount, 'One email should have been sent');
+    }
+}
